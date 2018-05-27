@@ -15,39 +15,38 @@ mContext!!.registerReceiver(this, filter)
 2. 當藍芽開啟後
  可以使用BluetoothAdapter.isEnabled來確認藍牙狀態
  ```
- 	mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-  if (mBluetoothAdapter != null && mBluetoothAdapter!!.isEnabled) {
-      //do something
-  }
+mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+if (mBluetoothAdapter != null && mBluetoothAdapter!!.isEnabled) {
+	//do something
+}
  ```
 3. 監聽藍牙裝置連接斷線狀態
 可以透過BluetoothProfile.ServiceListener 這個interface來監聽手機藍牙裝置連結狀態
 使用 mBluetoothAdapter!!.getProfileProxy()來註冊listener
  ```
- var mProfileListener = object : BluetoothProfile.ServiceListener {
-				override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
-          //當有藍芽裝置連接就會觸發這個動作
-					if (profile == BluetoothProfile.HEADSET) {
-						mBluetoothHeadset = proxy as BluetoothHeadset
-						isBluetoothConnected = true
-					}
-				}
+var mProfileListener = object : BluetoothProfile.ServiceListener {
+override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
+//當有藍芽裝置連接就會觸發這個動作
+	if (profile == BluetoothProfile.HEADSET) {
+		mBluetoothHeadset = proxy as BluetoothHeadset
+		isBluetoothConnected = true
+	}
+}
 
-				override fun onServiceDisconnected(profile: Int) {
-          //當有藍芽裝置斷線就會觸發這個動作
-					if (profile == BluetoothProfile.HEADSET) {
-						mBluetoothHeadset = null
-						isBluetoothConnected = false
-						android.util.Log.d("BluetoothManager", "[Bluetooth] Headset disconnected")
-					}
-				}
-			}
-  val success = mBluetoothAdapter!!.getProfileProxy(mContext, mProfileListener, BluetoothProfile.HEADSET)
+override fun onServiceDisconnected(profile: Int) {
+	//當有藍芽裝置斷線就會觸發這個動作
+	if (profile == BluetoothProfile.HEADSET) {
+		mBluetoothHeadset = null
+		isBluetoothConnected = false
+		android.util.Log.d("BluetoothManager", "[Bluetooth] Headset disconnected")
+	}
+}
+val success = mBluetoothAdapter!!.getProfileProxy(mContext, mProfileListener, BluetoothProfile.HEADSET)
  ```
  解除註冊
  ```
-  if (mBluetoothAdapter != null && mProfileListener != null && mBluetoothHeadset != null) {
-			mBluetoothAdapter!!.closeProfileProxy(BluetoothProfile.HEADSET, mBluetoothHeadset)
-			mProfileListener = null
-	}
+if (mBluetoothAdapter != null && mProfileListener != null && mBluetoothHeadset != null) {
+	mBluetoothAdapter!!.closeProfileProxy(BluetoothProfile.HEADSET, mBluetoothHeadset)
+	mProfileListener = null
+}
  ```
